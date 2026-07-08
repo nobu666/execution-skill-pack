@@ -1,0 +1,21 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/confirm-master-push.sh",
+            "statusMessage": "checking git push target"
+          },
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/confirm-merge.sh",
+            "statusMessage": "checking gh pr merge"
+          }
+        ]
+      }
+    ]
+  }
+}

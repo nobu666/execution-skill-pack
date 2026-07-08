@@ -1,10 +1,10 @@
-# teaching — 教材制作ワークフロー（骨組み）
+# teaching — Teaching Material Production Workflow (Skeleton)
 
-**注: この領域は実績素材が薄い状態でFableが骨組みだけ書いた。教材1本分の制作ログを素材に肉付けしてから使うこと。**
+**Note: this area is still thin on track record — Fable wrote only the skeleton. Flesh it out with material from a full course's production log before using it.**
 
-1. 到達目標を検証可能に書く（「理解する」ではなく「〜を自分の環境で実行できる」）
-2. 受講者の環境差を先に潰す: 前提条件・動作確認手順を教材の頭に置き、自分の環境以外で最低1回通す
-3. 手順は全ステップを実機で再現してから書く（書きながら実行し、出力を教材に貼る。記憶で書かない）
-4. つまずきポイントは「実際に自分がハマった箇所」から書く（知識ノートの蓄積が素材になる。作者環境ではKnowledge/）
-5. 配布物: 受講者が少ない手数で導入できる形を目指す（コピー手順の明文化から始め、plugin化・1コマンド化は配布実績が出てから）
-6. レビュー: 対象読者に近い人（またはその設定を与えたagent）に通しで実行させ、詰まった箇所を直す
+1. Write the learning goal so it's verifiable ("can execute X in their own environment," not "understands X")
+2. Eliminate environment differences up front for learners: put prerequisites and a verification procedure at the top of the material, and run it through at least once on an environment other than your own
+3. Reproduce every step on real hardware before writing it down (execute while writing, and paste the actual output into the material — don't write from memory)
+4. Draw the pitfalls from places you actually got stuck yourself (an accumulation of knowledge notes becomes the material; in the author's environment this is Knowledge/)
+5. Distribution: aim for a form that lets learners get set up with the fewest steps possible (start by documenting the copy steps explicitly; turn it into a plugin or a single command only once there's a track record of actual distribution)
+6. Review: have someone close to the target audience (or an agent given that persona) run through it end to end and fix wherever they get stuck

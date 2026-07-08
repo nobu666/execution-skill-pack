@@ -1,10 +1,10 @@
-# seminar — セミナー・イベント設計ワークフロー（骨組み）
+# seminar — Seminar/Event Design Workflow (Skeleton)
 
-**注: この領域は実績素材が薄い状態でFableが骨組みだけ書いた。実施1回分のログを素材に肉付けしてから使うこと。**
+**Note: This area has thin track-record material — Fable wrote only the skeleton. Flesh it out using the log from one actual run before using it.**
 
-1. 対象者と「持ち帰り1つ」を1文で固定する（誰が、終わったあと何ができるようになるか）
-2. 逆算で構成する: 持ち帰り→そのために必要な納得→そのための実演・演習→導入、の順で後ろから組む
-3. 素材は自分の実績から引く（作者環境ではObsidian Vaultの意味検索。自環境のノート・実績置き場に読み替え）。実績にない主張・数字を作らない
-4. デモは必ず事前に実機で通す（当日初実行のデモは事故る）。失敗時の代替（録画・スクリーンショット）を用意する
-5. 資料は writing-quality 相当のガイドライン（作者環境の非同梱スキル。本Packでは quality-gate が近い）→ reviewer-structure → fact-checker の順でレビュー
-6. 実施後: 質問された箇所＝説明が薄かった箇所として知識ノート（作者環境ではKnowledge/）に還元。次回の骨子に反映する
+1. Fix the audience and the "one takeaway" in a single sentence (who, and what they'll be able to do afterward)
+2. Structure it by working backward: takeaway → the conviction needed to get there → the demo/exercise for that → the introduction, building from the end forward
+3. Draw material from your own track record (in the author's environment this is semantic search over the Obsidian Vault — substitute your own notes/track-record store). Don't fabricate claims or numbers that aren't backed by a track record
+4. Always run the demo on the real machine beforehand (a demo run for the first time on the day will crash and burn). Prepare a fallback for failure (recording/screenshots)
+5. Review materials in this order: writing-quality-equivalent guidelines (a skill not bundled in the author's environment; quality-gate is the closest match in this Pack) → reviewer-structure → fact-checker
+6. After the session: treat the points that got questioned as the points where the explanation was thin, and feed them back into a knowledge note (Knowledge/ in the author's environment). Reflect them in the outline for next time

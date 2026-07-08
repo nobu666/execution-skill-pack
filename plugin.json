@@ -1,6 +1,0 @@
-{
-  "name": "execution-skill-pack",
-  "version": "0.1.0",
-  "description": "高性能モデルの既定挙動（結論先行・即行動・証拠突合・許可の射程・レビュー隔離）をOpus/Sonnetで再現するためのoutput-style・skills・agents一式",
-  "author": "nobu666"
-}

@@ -1,31 +1,31 @@
-# model-policy — モデル・effortの使い分け
+# model-policy — Model / effort selection
 
-原則: **生成は安いモデル、判定は高いモデル。**
+Principle: **Generation uses a cheap model, judgment uses a strong model.**
 
-| 作業 | モデル | 根拠 |
+| Task | Model | Rationale |
 |---|---|---|
-| 収集・整形・定型出力（ニュースダイジェスト等） | Sonnet固定 | 深い推論が不要。無人実行では上位モデルの容量エラーで欠番が出た実績があり、安定性でもSonnetが勝つ |
-| 実装・ドラフト執筆 | Sonnet | 数を出す工程。レビューで拾う前提 |
-| コードレビュー（正しさ） | Sonnet | reviewer-code agentの既定 |
-| コードレビュー（セキュリティ観点） | Opus以上を明示指定 | reviewer-codeは使わず、観点を明示して別途依頼する |
-| 文章の構造レビュー（通し読み） | その時点で使える最高性能 | 「合っているか」は最も判断力を要する。機械検査で代替できない |
-| 設計判断・環境診断・計画 | 最高性能＋Plan Mode | 間違いのコストが高く、やり直しが利きにくい |
-| ファクトチェック | Sonnet | 取得と突合が主で、判断は3値に限定してある |
+| Collection, formatting, boilerplate output (news digests, etc.) | Sonnet fixed | Deep reasoning isn't needed. Unattended runs have shown missed entries from higher-tier models hitting capacity errors — Sonnet also wins on stability |
+| Implementation / draft writing | Sonnet | A high-volume step. Assumes review will catch issues |
+| Code review (correctness) | Sonnet | Default for the reviewer-code agent |
+| Code review (security perspective) | Explicitly specify Opus or higher | Don't use reviewer-code; request separately with the perspective made explicit |
+| Structural review of prose (read-through) | Whatever is the highest-performing model available at the time | "Is this correct?" demands the most judgment. Cannot be replaced by mechanical checks |
+| Design decisions, environment audits, planning | Highest-performing model + Plan Mode | Mistakes are costly and hard to undo |
+| Fact-checking | Sonnet | Mostly retrieval and cross-checking; judgment is limited to a 3-value scale |
 
 ## effort / thinking
 
-- 探索・定型: 低
-- 確定操作の直前・最終レビュー・計画の最終化: 高
-- 迷ったら: タスクの「取り返しのつかなさ」に比例させる
+- Exploration, boilerplate: low
+- Right before a confirmed operation, final review, plan finalization: high
+- When in doubt: scale it to how irreversible the task is
 
-## Plan Modeを使う場面
+## When to use Plan Mode
 
-- 不可逆操作（設定変更・公開・移行）を含む作業
-- 変更対象が3ファイルを超える作業
-- ユーザーの依頼が曖昧で、解釈の分岐が成果物を大きく変える作業
+- Work involving irreversible operations (config changes, publishing, migration)
+- Work touching more than 3 files
+- Work where the user's request is ambiguous and differing interpretations would substantially change the outcome
 
-## 人間承認を必ず挟む場面
+## When to always require human approval
 
-- git push / gh pr merge / 公開 / 削除 / 課金（hookでも強制するが、モデル側も自ら止まる）
-- 既存の自動化（launchd・cron・CI）への変更
-- 許可の根拠を1つ指させないすべての確定操作
+- git push / gh pr merge / publishing / deletion / billing (also enforced by hooks, but the model itself should stop as well)
+- Changes to existing automation (launchd, cron, CI)
+- Any confirmed operation where a single, clear basis for permission cannot be identified

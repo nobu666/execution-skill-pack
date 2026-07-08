@@ -1,27 +1,27 @@
 ---
 name: workflow-patterns
-description: 中規模以上のタスクを設計するときの並列化・委譲・検証ループの使い分けパターン集。「どう進めるのが速い?」「並列でやって」「レビュー体制を組んで」などで起動するほか、複数の独立サブタスクが見えたら自発的に参照する。
+description: A collection of patterns for choosing between parallelization, delegation, and verification loops when designing medium-or-larger tasks. Triggered by phrases like "What's the fastest way to proceed?", "Do this in parallel", "Set up a review structure", and also referenced proactively whenever multiple independent subtasks appear.
 ---
 
-# workflow-patterns — 並列化・委譲・検証の使い分け
+# workflow-patterns — Choosing Between Parallelization, Delegation, and Verification
 
-## 原則4つ
+## Four Principles
 
-- **探索は並列**: 独立した調査・検索・レビューは同時に投げる。結果待ちの間も自分の作業を続け、次の作業が結果に依存するときだけ逐次で待つ
-- **書き込みは直列**: 同一ファイルへの並列書き込みは絶対にしない。書き込み系サブタスクを並列にするときはworktree等で隔離する
-- **レビューは別コンテキスト**: 自分で書いた直後の自分は最悪のレビュアー。レビューは必ずsubagent（または別セッション）に出す。レビュアーには「観点を1つだけ」渡す（全部見ろは何も見ないのと同じ）
-- **検証は実データ**: 動いている仕組み（パイプライン・自動化・フック）に手を入れたら、作り物の例ではなく実データでend-to-endに1周通す
+- **Exploration is parallel**: Launch independent research, searches, and reviews at the same time. Keep working on your own tasks while waiting for results, and only wait sequentially when the next step depends on those results.
+- **Writes are serial**: Never write to the same file in parallel. When parallelizing write-type subtasks, isolate them with worktrees or similar mechanisms.
+- **Review happens in a separate context**: You are the worst possible reviewer of something you just wrote. Always hand review off to a subagent (or a separate session). Give the reviewer a single perspective to focus on — "look at everything" amounts to looking at nothing.
+- **Verification uses real data**: When you modify a working system (a pipeline, automation, or hook), run it end-to-end once with real data, not a contrived example.
 
-## パターン
+## Patterns
 
-### 生成→判定の分離
-生成（ドラフト・実装）は安いモデルで数を出し、判定（レビュー・選定）は高いモデルに集中させる。判定者には成果物だけ渡し、生成過程の言い訳を渡さない。
+### Separating Generation from Judgment
+Use a cheap model to produce volume for generation (drafts, implementations), and concentrate judgment (review, selection) in a strong model. Give the judge only the output, not the excuses behind how it was generated.
 
-### 多観点レビュー
-1レビュアー=1観点で並列に出す（正しさ／セキュリティ／構造）。観点が独立なら同時に走らせ、全部戻ってから統合する。同一指摘の重複は統合時に自分で潰す。
+### Multi-Perspective Review
+Run reviewers in parallel, one reviewer per perspective (correctness / security / structure). If the perspectives are independent, run them simultaneously and merge once all results are back. Dedupe overlapping findings yourself during the merge.
 
-### 失敗→ルール→機構の昇格
-同じ失敗が2回起きたらルール（文書）にする。ルールにしたのに再発したらhook・permission・CIなどの機構に昇格する。ルールは読まれないことがあるが、機構は必ず動く。
+### Escalating Failure to Rule to Mechanism
+If the same failure happens twice, turn it into a rule (documentation). If it recurs even after becoming a rule, escalate it to a mechanism such as a hook, permission, or CI. Rules may go unread, but mechanisms always run.
 
-### 段階承認
-不可逆操作を含む計画は、Phaseに分けて各Phaseの完了時に止まる。各Phaseにロールバック手段を用意してから着手する（ロールバックが書けないPhaseは設計が終わっていない）。
+### Staged Approval
+For plans that include irreversible operations, split the work into phases and pause at the end of each phase. Prepare a rollback method for each phase before starting it — a phase you can't write a rollback for isn't fully designed yet.

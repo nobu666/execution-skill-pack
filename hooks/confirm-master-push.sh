@@ -1,30 +1,34 @@
 #!/usr/bin/env bash
-# PreToolUse(Bash) hook: master/main に届く git push を確認制(ask)にする。
-# 2026-07-08 硬化: 「git push」の連続部分文字列一致をやめ、コマンド区切り
-# (;&|) を跨がない範囲で git ... push を検出する（git -C/-c/--no-pager 等の
-# グローバルオプション越しに対応）。ブランチ判定は -C や先行する cd の
-# 対象ディレクトリで行い、--all/--mirror は無条件で ask にする。
-# ponytail: 素朴な空白ベースの解析。引用符内の空白入りパスまでは解かないが、
-# その場合も master 明示・--all 系は文字列検査で ask に倒れる（素通りより過剰確認側）。
+# PreToolUse(Bash) hook: turns any git push that could land on master/main into
+# a confirm-first (ask) operation.
+# 2026-07-08 hardening: replaced the "git push" contiguous-substring match with
+# token-order detection that doesn't cross command separators (;&|), so it
+# still matches across global options like git -C/-c/--no-pager. Branch
+# detection follows -C or a preceding cd's target directory; --all/--mirror
+# always ask unconditionally.
+# ponytail: naive whitespace-based parsing. It doesn't resolve quoted paths
+# containing spaces, but even then an explicit master/main or --all-family
+# flag still falls through to ask via plain string matching (over-asking is
+# the safe failure mode here, not silent pass-through).
 
 payload=$(cat)
 cmd=$(printf '%s' "$payload" | jq -r '.tool_input.command // empty' 2>/dev/null)
 
 ask() {
-  printf '%s' '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"master/main へ届く可能性のある git push です。続行してよいか確認してください。"}}'
+  printf '%s' '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"This git push may land on master/main. Confirm whether to proceed."}}'
   exit 0
 }
 
-# コマンド区切りを跨がずに git ... push が現れるか（オプション越し対応）
+# Does "git ... push" appear without crossing a command separator (survives intervening options)?
 printf '%s' "$cmd" | grep -Eq '(^|[[:space:];&|(])git[[:space:]]+([^;&|]*[[:space:]])?push([[:space:]]|$)' || exit 0
 
-# 全ブランチ/ミラー push は無条件で確認
+# All-branches / mirror pushes always ask
 printf '%s' "$cmd" | grep -Eq '(^|[[:space:]])--(all|mirror)([[:space:]]|$)' && ask
 
-# refspec 等に master/main が明示されていれば確認
+# Ask if master/main is named explicitly (e.g. in a refspec)
 printf '%s' "$cmd" | grep -Eq '(^|[^a-zA-Z0-9_-])(master|main)([^a-zA-Z0-9_-]|$)' && ask
 
-# 対象ディレクトリの特定: git -C <dir> → 先行する cd <dir> → フックの cwd
+# Resolve the target directory: git -C <dir> → a preceding cd <dir> → the hook's cwd
 dir=$(printf '%s' "$cmd" | sed -nE 's/.*git[[:space:]]+(-[a-zA-Z-]+[[:space:]]+)*-C[[:space:]]+([^[:space:]]+).*/\2/p' | head -1)
 if [ -z "$dir" ]; then
   dir=$(printf '%s' "$cmd" | sed -nE 's/(^|.*[;&|][[:space:]]*)cd[[:space:]]+([^[:space:];&|]+).*/\2/p' | head -1)

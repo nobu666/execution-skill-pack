@@ -1,9 +1,9 @@
-# business — 事業・戦略検討ワークフロー（骨組み）
+# business — Business/Strategy Deliberation Workflow (Skeleton)
 
-**注: この領域は実績素材が薄い状態でFableが骨組みだけ書いた。実際の検討1回分のログを素材に肉付けしてから使うこと。**
+**Note: this area is short on real-world material — Fable wrote only the skeleton. Flesh it out with the log from one actual deliberation before using it.**
 
-1. 問いを1文に固定する（「どうすべきか」ではなく「AとBのどちらを選ぶか」まで絞る）
-2. 反証を先に集める: 壁打ちでは賛成意見より先に「この案が死ぬ条件」を出させる（複数の人格・観点を演じさせる仕組みがあれば多観点出しに使える）
-3. 事実と推測を分離する: 判断材料のうち一次情報で裏取りできるものは fact-checker で先に確定させる。残りは（推測）マークつきで扱う
-4. 判断はDecisions/（作者のObsidian Vaultの分類。自環境の記録先に読み替え）に残す: 選ばなかった案と、その理由まで書く（次に同じ検討を繰り返さないため）
-5. 決めたら実行計画に変換する（task-execution参照）。決断と実行を同じセッションで混ぜない
+1. Fix the question to a single sentence (narrow it down to "choose A or B" rather than "what should we do")
+2. Collect counterevidence first: in a sounding-board session, have it surface "the conditions under which this idea fails" before supporting opinions (if there's a mechanism for role-playing multiple personas/viewpoints, use it to draw out multiple angles)
+3. Separate fact from speculation: among the decision-making inputs, use fact-checker to confirm first whichever ones can be verified against primary sources (primary-source verification). Treat the rest as marked (speculation)
+4. Record the decision in Decisions/ (the author's Obsidian Vault category — substitute your own environment's record location): write down even the options not chosen and the reasons why (so the same deliberation isn't repeated next time)
+5. Once decided, convert it into an execution plan (see task-execution). Don't mix decision-making and execution in the same session

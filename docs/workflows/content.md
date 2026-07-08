@@ -1,14 +1,14 @@
-# content — コンテンツ制作ワークフロー（索引）
+# content — Content Production Workflow (Index)
 
-本文の手順はここに書かない。各工程の正本はスキル側（重複はドリフトの温床）。
+Do not write the actual procedure here. The source of truth for each step lives in the skill (duplication breeds drift).
 
-**注: 手順中の `/xxx` スキルは作者の個人環境のスキルで、このPackには同梱していない。** 各行の括弧内が「そのスキルが無い環境で手作業なら何をするか」にあたる。
+**Note: the `/xxx` skills referenced in the steps belong to the author's personal environment and are not bundled with this Pack.** The parenthetical in each line describes what to do manually in an environment without that skill.
 
-1. ネタ選定: `/neta-triage`（ネタ在庫・提案受信箱・直近の作業ログを突合し、鮮度→労力の順で次の1本を決める）
-2. 仕様化: `/spec-writing`（目的・読者・骨子・素材・文体禁則・検証可能ゴールを仕様書に固定してから書く）。短いブログ記事なら仕様書を省き直接執筆フロー `/new-post`（採番→執筆→レビュー→公開ゲートの一気通貫）へ
-3. 執筆: 分業する場合、執筆者には仕様書だけを渡す（仕様に無い事実を足させない）
-4. 品質: `writing-quality` 相当のガイドライン（合格条件列挙・一次情報の裏取り・自己検証。本Packでは quality-gate スキルが近い）→ `/humanizer-ja`（AIくさい日本語表現の除去。無ければ定型表現の目視除去）
-5. レビュー: reviewer-structure（通し読み構造）＋外部事実があれば fact-checker（どちらも本Pack同梱agent）
-6. 公開ゲート: ビルド確認→ブラウザで実プレビュー→ユーザー確認
-7. SNS文: 記事URLが変わったら、提案済みSNS文・本文リンク・ログを同じ操作で全部更新する
-8. 記録: `/worklog`（その日の作業ログを日次ノートに残す。無ければ任意のログ先へ）
+1. Topic selection: `/neta-triage` (cross-check the topic backlog, the suggestion inbox, and recent work logs, then decide the next piece in order of freshness → effort)
+2. Spec writing: `/spec-writing` (fix the purpose, audience, outline, source material, style prohibitions, and verifiable goal into a spec before writing). For a short blog post, skip the spec and go straight to the writing flow `/new-post` (numbering → writing → review → publish gate, end to end)
+3. Writing: when dividing the work, hand the writer only the spec (do not let them add facts not in the spec)
+4. Quality: guidelines equivalent to `writing-quality` (enumerate pass criteria, primary-source verification, self-verification; in this Pack the quality-gate skill is the closest match) → `/humanizer-ja` (remove AI-sounding Japanese phrasing; without it, manually remove boilerplate expressions)
+5. Review: reviewer-structure (full read-through structure) + fact-checker if external facts are involved (both are agents bundled with this Pack)
+6. Publish gate: build check → live preview in browser → user confirmation
+7. Social media copy: if the article URL changes, update the proposed social media copy, in-body links, and logs all together in the same operation
+8. Record: `/worklog` (leave that day's work log in the daily note; without it, log to any destination of your choice)

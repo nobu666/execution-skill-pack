@@ -1,26 +1,26 @@
 ---
 name: quality-gate
-description: 成果物の提出・コミット提案・記事公開の直前に必ず通す機械的チェックリスト。「提出前チェック」「公開前確認」「これで出していい?」などで起動するほか、あらゆる成果物提出の最終ゲートとして自発的に適用する。
+description: A mechanical checklist that must be run immediately before submitting a deliverable, proposing a commit, or publishing an article. Triggered by phrases like "pre-submission check," "pre-publish check," "is this okay to submit?" and also applied proactively as the final gate for any deliverable submission.
 ---
 
-# quality-gate — 提出前の機械的ゲート
+# quality-gate — a mechanical gate before submission
 
-提出の直前に、上から順に実行する。1つでも通らなければ提出しない（直すか、通らない理由を報告に書く）。
+Run through this in order, right before submission. If even one item fails, do not submit (either fix it, or write the reason it failed in the report).
 
-**導入環境に既存の完了報告フォーマットがあればそれを優先する。** 下記「報告フォーマット」はそれが無い場合の既定であり、既存フォーマットがある場合は本スキルからは証拠列（証拠つき／未実施の明記）だけを上乗せで必須にする。
+**If the deployed environment already has an existing completion-report format, prefer that one.** The "Report Format" below is the default used when no such format exists; when an existing format is present, this skill only adds the evidence column (marking items as evidenced / not done) as a required addition on top of it.
 
-## チェックリスト
+## Checklist
 
-1. **合格条件との突合**: 着手時に列挙した合格条件と1項目ずつ突き合わせたか。確認済みの項目は証拠つき、未確認の項目は「未検証」と明記したか
-2. **機械カウント**: 数えられるもの（文字数・リンク数・禁止パターン）は機械で数えたか。目視カウントは不合格
-3. **証拠突合**: 報告に書く操作すべてに、同一セッション内のツール実行と成功結果があるか。ないものは「未実施」に書き換える
-4. **生の結果**: テスト・ビルドの結果は生の出力で貼ったか。失敗は失敗のまま報告しているか
-5. **弱点の名指し**: 成果物の一番弱い箇所を1つ具体的に挙げたか。直すか、直せない理由を書いたか
-6. **スコープ検査**: 変更した全行が依頼に紐づくか。紐づかない行は削ったか
-7. **レビュー隔離**: 小さくない変更なら、自分と別コンテキスト（subagent）のレビューを通したか。コードは reviewer-code、文章は reviewer-structure、外部事実は fact-checker（同名agentが無い環境では、自分と別コンテキストのsubagentに観点を1つだけ渡して代替する）
+1. **Cross-check against pass criteria**: Did you check off the pass criteria enumerated at the start of the task, one item at a time? Are confirmed items backed by evidence, and unconfirmed items explicitly marked "unverified"?
+2. **Mechanical counting**: For anything countable (character counts, link counts, forbidden patterns), was it counted mechanically? Visual/manual counting fails this check.
+3. **Evidence reconciliation**: Does every operation written in the report have a corresponding tool execution and successful result within the same session? If not, rewrite it as "not done."
+4. **Raw results**: Were test and build results pasted as raw output? Are failures reported as failures, unmodified?
+5. **Naming the weak point**: Did you specifically name the single weakest part of the deliverable? Did you either fix it or write why it can't be fixed?
+6. **Scope check**: Does every changed line trace back to the request? Were untraceable lines removed?
+7. **Review isolation**: For non-trivial changes, was the work reviewed by a subagent running in a context separate from your own? Use reviewer-code for code, reviewer-structure for prose, and fact-checker for external facts (in environments without agents of the same name, substitute by handing a single review perspective to any subagent running in a separate context from your own).
 
-## 報告フォーマット
+## Report Format
 
-1. **全体の流れ** — 何をして何が終わったか一行で
-2. **やったこと** — 表形式で、項目・ファイル・状態・証拠（実行コマンド／パス／結果）。証拠を書けない行は「未実施」と書く
-3. **やっていないこと** — 意図的にスキップした項目とその理由
+1. **Overall flow** — what was done and what was completed, in one line
+2. **What was done** — a table with columns for item, file, status, and evidence (command run / path / result). Any row lacking evidence must say "not done"
+3. **What was not done** — items intentionally skipped, and why

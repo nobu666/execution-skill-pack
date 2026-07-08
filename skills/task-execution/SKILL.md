@@ -1,38 +1,38 @@
 ---
 name: task-execution
-description: 複数ステップの実装・執筆・調査タスクに着手する前に適用する実行規律。タスク分解、自走と確認の境界、不明点の扱い、長時間タスクの進め方の正本。「タスクを進めて」「実装して」「一連の作業をやって」など、2手以上かかる依頼を受けたら最初に参照する。
+description: Execution discipline to apply before starting a multi-step implementation, writing, or research task. The canonical reference for task decomposition, the boundary between autonomous action and confirmation, handling of unclear points, and how to proceed on long-running tasks. Consult this first whenever a request will take two or more steps — "proceed with the task," "implement this," "carry out this series of work," and similar.
 ---
 
-# task-execution — タスク実行の規律
+# task-execution — Task execution discipline
 
-## 分解（着手前）
+## Decomposition (before starting)
 
-- タスクを「検証可能なゴール」に変換してから着手する
-  - 「バリデーション追加」→「不正入力のテストを書き、パスさせる」
-  - 「バグ修正」→「再現テストを書き、パスさせる」
-  - 「Xをリファクタ」→「前後でテストがパスすることを確認」
-- `[ステップ] → 検証: [チェック内容]` の形式で3〜7個に分解して提示する。7個を超えるなら、タスクを分割するかPlan Modeで計画を先に承認してもらう
-- 明確な成功基準があれば自律的にループする。曖昧な基準（「動くようにして」）は着手前に確認する
+- Convert the task into a "verifiable goal" before starting
+  - "Add validation" → "Write tests for invalid input, and make them pass"
+  - "Fix the bug" → "Write a reproduction test, and make it pass"
+  - "Refactor X" → "Confirm tests pass before and after"
+- Break the task into 3–7 items in the form `[step] → verification: [what to check]` and present them. If it exceeds 7 items, either split the task or get the plan approved up front in Plan Mode
+- If there is a clear success criterion, loop autonomously. If the criterion is ambiguous ("make it work"), confirm before starting
 
-## 自走と確認の境界
+## The boundary between autonomous action and confirmation
 
-- **進んでよい**: 可逆で、依頼の範囲内の操作すべて。エラー後のリトライ、不足情報の自力調査を含む
-- **止まって聞く（この3つだけ）**: 不可逆な操作（push・merge・削除・公開・課金）／実質的なスコープ変更／ユーザーにしか出せない情報
-- 逆に、この3つは必ず聞く。許可は そのrepo・その作業・その1回 限りで、持ち越さない
+- **OK to proceed**: any operation that is reversible and within the scope of the request. This includes retrying after an error and independently investigating missing information
+- **Stop and ask (only these three)**: irreversible operations (push, merge, delete, publish, billing) / a substantive scope change / information only the user can provide
+- Conversely, always ask about these three. Permission is scoped to that repo, that piece of work, that one time only — it does not carry over
 
-## 不明点の扱い
+## Handling unclear points
 
-- 「何が不明か」を名指しできるなら質問する。名指しできないなら情報不足なので、まず自分で調べる（質問はユーザーの時間を使う最も高価な操作）
-- 複数の解釈がありえる場合、黙って選ばず、推奨1つ＋理由を添えて確認する（選択肢の網羅はしない）
+- If you can name exactly what is unclear, ask. If you can't name it, that means you lack information — investigate it yourself first (a question is the most expensive operation, since it consumes the user's time)
+- When multiple interpretations are possible, don't silently pick one — present one recommendation with a reason and confirm (don't enumerate every option)
 
-## 長時間タスク
+## Long-running tasks
 
-- 一区切りごとに進捗を外部ファイル（作業ログ）に書き出す。コンテキスト圧縮を前提に、「次の自分」が読んで再開できる粒度で書く
-- 最終報告は経緯の続きではなく「再着地」として書く。作業中に発明した語彙・略称を使わない。結果を一文で述べ、ファイル・コミットに言及するときは平易な説明を添える
+- At each milestone, write progress out to an external file (a work log). Assume context compaction will happen, and write at a granularity that lets "your future self" read it and resume
+- Write the final report as a "re-landing," not a continuation of the narrative. Don't use vocabulary or abbreviations invented during the work. State the result in one sentence, and when referring to files or commits, add a plain explanation
 
-## 失敗しやすいパターンと回避策
+## Failure-prone patterns and how to avoid them
 
-- **頼まれていないリファクタ・掃除**: 変更した全行が依頼に紐づくか提出前に確認する
-- **作り物の例だけで検証**: 動いているパイプラインに触ったら、実データでend-to-endに1周通してから完了と言う
-- **完了報告の先走り**: 報告する操作1件ごとにツール実行の証拠と突合する。突合できないものは「未実施」と書く
-- **許可の流用**: 確定操作の直前に、根拠となる明示許可を1つ指させる。指せなければ聞く
+- **Unrequested refactoring or cleanup**: before submitting, confirm that every changed line ties back to the request
+- **Verifying with fabricated examples only**: once you've touched a live pipeline, run it end-to-end with real data once before declaring it done
+- **Jumping ahead in the completion report**: for each operation you report, cross-check it against tool-execution evidence. Anything that can't be cross-checked should be marked "not done"
+- **Reusing permission beyond its scope**: right before an irreversible operation, point to the one explicit grant of permission it rests on. If you can't point to one, ask

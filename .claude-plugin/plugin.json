@@ -1,0 +1,13 @@
+{
+  "name": "execution-skill-pack",
+  "displayName": "Execution Skill Pack",
+  "version": "0.2.0",
+  "description": "An output-style, skills, and agents bundle that translates a frontier model's default behavior (conclusion-first, immediate action, evidence reconciliation, permission scope, isolated review) into explicit instructions other models can follow.",
+  "author": {
+    "name": "nobu666",
+    "url": "https://github.com/nobu666"
+  },
+  "repository": "https://github.com/nobu666/execution-skill-pack",
+  "license": "MIT",
+  "keywords": ["output-style", "agents", "skills", "review", "guardrails"]
+}

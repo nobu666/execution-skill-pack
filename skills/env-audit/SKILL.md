@@ -1,35 +1,35 @@
 ---
 name: env-audit
-description: Claude Code環境（CLAUDE.md / skills / agents / hooks / permissions / plugins / MCP / コンテキスト効率）をread-onlyで診断するスキル。「環境を診断して」「セットアップを監査して」「Claude Codeの構成を見直して」「環境が重い/散らかった」などで起動する。四半期ごとの定期実行を推奨。診断のみで変更はしない（変更は診断結果の承認後に別途）。
+description: A skill that performs a read-only audit of the Claude Code environment (CLAUDE.md / skills / agents / hooks / permissions / plugins / MCP / context efficiency). Triggered by phrases like "audit my environment," "audit my setup," "review my Claude Code configuration," or "environment feels heavy/cluttered." Recommended to run quarterly. Diagnosis only, no changes (changes are handled separately after the diagnosis is approved).
 ---
 
-# env-audit — Claude Code環境のread-only診断
+# env-audit — Read-only diagnosis of the Claude Code environment
 
-環境を読み取り専用で診断し、影響度×工数で改善点を提示する。**このスキルの実行中は、ファイル作成・編集・削除・設定変更を一切しない**（Plan Modeの計画ファイルのみ例外）。
+Performs a read-only diagnosis of the environment and presents improvement points ranked by impact × effort. **While this skill is running, it must not create, edit, or delete any file, or change any settings** (the only exception is a Plan Mode plan file).
 
-## 手順
+## Procedure
 
-### 1. スコープ確認（最初に必ず聞く）
+### 1. Confirm scope (always ask this first)
 
-診断前に確認するのは2種: ユーザーにしか出せない情報（スキャン範囲＝ホーム全体か開発領域のみか／除外フォルダ）と、permissionプロンプトを束ねるためのread-onlyコマンドの包括承認（実行予定コマンドを提示してから求める）。出力形式は既定で一括提示とし、分割希望があればそれに従う（聞かない）。
+Before diagnosing, confirm two things: information only the user can provide (scan scope — entire home directory or just the development area? / folders to exclude), and a blanket approval for read-only commands to bundle permission prompts (present the commands you plan to run before asking). The output format defaults to a single combined presentation; only split it if the user requests that (do not ask about this up front).
 
-### 2. 構造 → 分量 → 本文 の順で見る
+### 2. Look in the order: structure → volume → content
 
-- 構造: `ls` / `find`（2〜3階層まで）。`~/Library`・キャッシュ・`node_modules`・`.git` 内部は除外
-- 分量: 常時コンテキストを `wc -c` で実測する（CLAUDE.md・CLAUDE.local.md・output-style・memory index）。enabledPluginsが注入するskill/agent説明文の本数を数える
-- 本文: 開くのは設定ファイルのみ（CLAUDE.md / SKILL.md / settings.json / .mcp.json / hooks / agents / output-styles）。`~/.claude.json` は認証情報を含みうるため `jq 'keys'` でキー構造のみ。個人情報・認証情報・ノート本文は開かない
+- Structure: `ls` / `find` (down to 2-3 levels). Exclude `~/Library`, caches, `node_modules`, and the contents of `.git`
+- Volume: measure the always-loaded context with `wc -c` (CLAUDE.md, CLAUDE.local.md, output-style, memory index). Count how many skill/agent description strings enabledPlugins injects
+- Content: only open configuration files (CLAUDE.md / SKILL.md / settings.json / .mcp.json / hooks / agents / output-styles). Since `~/.claude.json` may contain credentials, inspect only its key structure with `jq 'keys'`. Do not open personal information, credentials, or note bodies
 
-### 3. 診断観点
+### 3. Diagnostic angles
 
-- 常時読むべきもの（CLAUDE.md）と手順（skills）が混ざっていないか
-- 同じ指示が複数ファイルに重複していないか（ドリフトの兆候）
-- 旧commands形式の残り、機能していないプラグイン、一回きりの許可エントリ
-- 「ルールに書いたのに再発した」ものがhook化されずに残っていないか
-- permissionsの許可が広すぎないか（特にWrite/Editの全面allow）
-- バックアップ・ロールバック経路があるか
+- Whether things that should always be read (CLAUDE.md) are mixed together with procedures (skills)
+- Whether the same instruction is duplicated across multiple files (a sign of drift)
+- Leftover legacy commands format, non-functioning plugins, one-off permission entries
+- Whether something "written into the rules but that recurred anyway" has been left without being turned into a hook
+- Whether permissions are too broad (especially a blanket allow on Write/Edit)
+- Whether a backup/rollback path exists
 
-### 4. 出力
+### 4. Output
 
-- 現状マップ（ツリー）→ 問題点一覧（根拠つき）→ 影響度×工数マトリクス → 段階的実行プラン（Phaseごとに目的・内容・リスク・ロールバック・承認ポイント）
-- 「むしろ触らない方がよいもの」を必ず1つ以上挙げる（動かすと壊れるパス依存の洗い出しを先にやる）
-- 変更は必ずユーザーの承認後。Phaseごとに止まる
+- Current-state map (tree) → list of issues (with rationale) → impact × effort matrix → phased execution plan (for each phase: purpose, content, risk, rollback, approval point)
+- Always list at least one "thing better left untouched" (identify path dependencies that would break if touched, before anything else)
+- Changes require the user's approval every time. Stop and wait at each phase

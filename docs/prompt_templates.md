@@ -1,42 +1,42 @@
-# prompt_templates — 委譲・依頼の定型
+# prompt_templates — Delegation and request boilerplate
 
-subagent起動時・他モデルへのタスク投入時にそのまま使う。共通原則: **観点は1つ・返す形式を指定・対象外を明示**。
+Use these as-is when spinning up a subagent or handing a task off to another model. Shared principle: **one perspective, specify the return format, state what's out of scope**.
 
-## レビュー依頼型
-
-```
-対象: <diffの取得方法 or ファイルパス>
-観点: <正しさ / セキュリティ / 文章構造> のうち1つだけ
-出力: 指摘ごとに「場所・何が問題か・壊れる具体シナリオ・直し方」の4点セット。
-     壊れるシナリオを書けない指摘は捨てる。
-指摘ゼロなら「指摘なし」と言い切る。褒めない。対象外への提案をしない。
-```
-
-## 調査委譲型
+## Review request type
 
 ```
-問い: <1文で>
-読んでよい範囲: <パス・リポジトリ>
-返すもの: 結論3行＋根拠のパス:行番号。ファイル全文を貼り返さない。
-見つからなかったら「見つからなかった」と、どこを探したかを添えて返す。
+Target: <how to get the diff, or a file path>
+Perspective: one of <correctness / security / prose structure> only
+Output: for each finding, a 4-part set: "location, what's wrong, the concrete scenario where it breaks, how to fix it."
+     Discard any finding you can't write a breaking scenario for.
+If there are zero findings, say "no findings" outright. Don't praise. Don't propose anything out of scope.
 ```
 
-## 執筆委譲型
-
-仕様書（目的・成果物・読者設定・骨子・素材・文体禁則・検証可能なゴール）を先に書き、執筆者には仕様書だけを渡す。仕様に無い事実を足させない。検証可能なゴールは機械で検査する。
-
-## ファクトチェック依頼型
+## Investigation delegation type
 
 ```
-対象: <文書パス or 主張リスト>
-検証可能な主張をすべて列挙し、一次情報と突合せよ。判定は 一致/不一致/一次情報なし の3値。
-主張ごとに1行: [判定] 要約 — 根拠URL。二次記事を一次情報の代替にしない。
+Question: <in one sentence>
+Scope allowed to read: <path / repository>
+What to return: 3-line conclusion + supporting path:line-number citations. Don't paste back whole files.
+If you can't find it, return "not found" along with where you looked.
 ```
 
-## 差し戻し型（レビュー結果の反映）
+## Writing delegation type
+
+Write the spec first (purpose, deliverable, target reader, outline, source material, style prohibitions, verifiable goal), and give the writer only the spec. Don't let them add facts not in the spec. Check the verifiable goal mechanically.
+
+## Fact-check request type
 
 ```
-以下の指摘を反映せよ。反映は指摘された箇所だけ。ついでの改善をしない。
-反映後、指摘ごとに「反映した/しない（理由）」の対応表を返す。
-<指摘リスト>
+Target: <document path or list of claims>
+Enumerate every verifiable claim and cross-check it against primary sources. Verdict is one of 3 values: match / mismatch / no primary source.
+One line per claim: [verdict] summary — source URL. Don't substitute secondary articles for primary sources.
+```
+
+## Rework type (reflecting review results)
+
+```
+Reflect the following findings. Only touch the flagged spots. No incidental improvements.
+After reflecting them, return a table mapping each finding to "reflected / not reflected (reason)."
+<list of findings>
 ```

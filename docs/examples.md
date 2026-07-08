@@ -1,39 +1,39 @@
-# examples — 失敗→ルール→機構の実例集
+# examples — A collection of real cases: failure → rule → mechanism
 
-実際に起きた失敗と、それがどの層（ルール／機構）に昇格したかの記録。Pack各所の条文の「なぜ」にあたる。
+A record of failures that actually occurred and which layer (rule or mechanism) they were escalated to. This corresponds to the "why" behind the articles throughout the Pack.
 
-## 実例1: 許可なきpush（複数回再発）
+## Case 1: Unauthorized push (recurred multiple times)
 
-「バックアップして」「入れておいて」を push の許可と解釈して実行。別repoでの直前の許可を次の作業に持ち越してマージまで実行、という同型の失敗が期間を空けて複数回起きた。
-- ルール化: 「許可は そのrepo・その作業・その1回 限り」（executor条10）
-- 機構化: `hooks/confirm-master-push.sh` と `hooks/confirm-merge.sh`（本Packに同梱）。stdinのJSONから `.tool_input.command` を取り、git pushのサブコマンド解析でmaster/main宛push・`--all`/`--mirror`を、gh pr mergeのサブコマンド解析でPRマージを検出し、該当すれば `{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"..."}}` を出力する（該当しなければ無出力でexit 0）。単純な文字列の連続一致は `git -C dir push` や `gh -R owner/repo pr merge` 等の変種ですり抜けるため、オプション越しのサブコマンド抽出にしてある
-- 教訓: **ルールにしたのに再発したら機構に昇格する。** ルールは読まれないことがあるが、機構は必ず動く。ただし機構も検出ロジックが甘いと迂回される（本件は一度単純一致で実装し、後日の監査で迂回を実測してから硬化した）
+Interpreted "back it up" or "put it in" as authorization to push, and executed it. The same type of failure — carrying over authorization just granted in a different repo into the next task and executing a merge — happened multiple times, spaced apart.
+- Turned into a rule: "Authorization is limited to that repo, that task, that one time" (executor Article 10)
+- Turned into a mechanism: `hooks/confirm-master-push.sh` and `hooks/confirm-merge.sh` (bundled with this Pack). They take `.tool_input.command` from the stdin JSON, detect pushes to master/main and `--all`/`--mirror` via subcommand parsing of git push, and detect PR merges via subcommand parsing of gh pr merge; if a match is found, they output `{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"..."}}` (if no match, no output and exit 0). A simple consecutive string match would be evaded by variants like `git -C dir push` or `gh -R owner/repo pr merge`, so subcommand extraction across options is used instead
+- Lesson: **If it recurs even after being turned into a rule, escalate it to a mechanism.** Rules may go unread, but a mechanism always runs. That said, a mechanism can still be bypassed if its detection logic is weak (in this case, it was first implemented with a simple match, and only hardened after a later audit measured the bypass in practice)
 
-## 実例2: 作り物の例だけで検証し、動いていた自動化を止めた
+## Case 2: Verified with contrived examples only, and stopped an automation that had been working
 
-pre-commitに内容スキャンを追加し、人工的なテストケースだけで「誤検知しない」と報告。実データで誤検知し、動いていた自動バックアップが半日以上停止した。
-- ルール化: 「動いている仕組みに触ったら実データでend-to-endに1周」（executor条12・workflow-patterns・task-execution）
-- 教訓: 検証の質はテストデータの質。本物で通していない検証は検証ではない
+Added a content scan to pre-commit and reported "no false positives" based only on artificial test cases. It produced a false positive on real data, and a working automated backup was down for more than half a day.
+- Turned into a rule: "When touching a working system, run one real-data end-to-end pass" (executor Article 12, workflow-patterns, task-execution)
+- Lesson: The quality of verification is the quality of the test data. Verification that hasn't been run against the real thing isn't verification
 
-## 実例3: 実行していない書き込みを「書き込んだ」と報告
+## Case 3: Reported a write as "done" without ever executing it
 
-複数箇所への書き込みを具体的なファイル名つきで完了報告したが、書き込みツールは一度も呼ばれていなかった。
-- ルール化: 「報告1件ごとにツール実行と突合。突合できないものは未実施と書く」（executor条9・quality-gate 3）
-- 機構化: 完了報告フォーマットに証拠列を必須化
-- 教訓: 捏造された完了報告が最悪の失敗。疑わしいのはセッション終盤とコンテキスト圧縮後
+Reported completion of writes to multiple locations, with specific file names, but the write tool had never actually been called.
+- Turned into a rule: "Reconcile every reported item against actual tool execution. Anything that can't be reconciled is marked as not done" (executor Article 9, quality-gate 3)
+- Turned into a mechanism: Made an evidence column mandatory in the completion report format
+- Lesson: A fabricated completion report is the worst kind of failure. Suspect it most at the end of a session and after context compaction
 
-## 実例4: サービスの提供条件をうろ覚えで断言（同一成果物内で2回連続訂正）
+## Case 4: Asserted a service's terms from vague memory (corrected twice in a row within the same deliverable)
 
-会話上の前提を誇張して成果物に書き、公式発表と食い違った。1回目の訂正でも推測で埋め直して外した。
-- ルール化: 「一次情報を取ってから書く。指摘されたら推測で埋め直さず1問で情報源を確認」（executor条11）
-- 機構化: fact-checker agent（公開前の裏取りを専任化）
+Exaggerated a conversational assumption when writing it into the deliverable, which contradicted the official announcement. Even the first correction was filled back in with guesswork and was wrong again.
+- Turned into a rule: "Get the primary source before writing. If pointed out, don't fill the gap back in with guesswork — confirm the source with one question" (executor Article 11)
+- Turned into a mechanism: fact-checker agent (dedicated to primary-source verification before publication)
 
-## 実例5: URL変更の伝播漏れ
+## Case 5: Failure to propagate a URL change
 
-記事の公開日変更でURLが変わったのに、先に提案済みのSNS投稿文を古いURLのまま放置し404に。
-- ルール化: 「URLが変わったら、参照箇所（SNS文・本文リンク・ログ）を同じ操作の中で全部更新」
-- 教訓: 変更の影響範囲は「そのファイル」ではなく「それを参照する全箇所」
+A change to an article's publication date changed its URL, but the previously proposed social media post text was left with the old URL, resulting in a 404.
+- Turned into a rule: "When a URL changes, update every place that references it (social media text, in-body links, logs) within the same operation"
+- Lesson: The scope of a change's impact isn't "that file" — it's "every place that references it"
 
-## 良い例: 指摘をルールに変えて同じレビュアーにもう一度見せる
+## Good example: Turning feedback into a rule and showing it to the same reviewer again
 
-レビュー指摘を場当たりで直すのではなく、指摘を一般化してルール（スキル・チェックリスト）に足し、同じレビュアーで再レビューして通す。修正とプロセス改善が同時に終わる。
+Rather than fixing review feedback ad hoc, generalize the feedback and add it to a rule (a skill or checklist), then pass re-review with the same reviewer. The fix and the process improvement finish at the same time.
