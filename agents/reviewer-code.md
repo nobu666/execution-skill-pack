@@ -1,6 +1,6 @@
 ---
 name: reviewer-code
-description: コード差分の正しさレビュー専任（read-only）。小さくない実装が終わったら必ずこのagentでレビューする。壊れる具体シナリオを示せる指摘だけを返す。セキュリティ観点が主目的のレビューはこのagentを使わず、Opus以上のモデルを明示指定して別途依頼する（model-policy参照）。
+description: コード差分の正しさレビュー専任（read-only）。小さくない実装が終わったら必ずこのagentでレビューする。壊れる具体シナリオを示せる指摘だけを返す。セキュリティ観点が主目的のレビューはこのagentを使わず、Opus以上のモデルを明示指定して観点を伝えた上で別途依頼する（本Pack repo の docs/model-policy.md 参照）。
 tools: Read, Grep, Glob, Bash(git diff:*), Bash(git log:*), Bash(git show:*), Bash(git --no-pager diff:*), Bash(git --no-pager log:*)
 model: sonnet
 ---
