@@ -12,12 +12,21 @@
 # the safe failure mode here, not silent pass-through).
 
 payload=$(cat)
-cmd=$(printf '%s' "$payload" | jq -r '.tool_input.command // empty' 2>/dev/null)
 
 ask() {
-  printf '%s' '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"This git push may land on master/main. Confirm whether to proceed."}}'
+  printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"%s"}}' \
+    "${1:-This git push may land on master/main. Confirm whether to proceed.}"
   exit 0
 }
+
+# Fail closed: a confirm gate that silently stops firing is worse than a noisy
+# one. If jq is missing, or the payload is non-empty but the command can't be
+# extracted, ask instead of exiting 0.
+command -v jq >/dev/null 2>&1 || ask "confirm-master-push hook: jq not found, cannot inspect the command. Install jq; confirm this command manually."
+cmd=$(printf '%s' "$payload" | jq -r '.tool_input.command // empty' 2>/dev/null)
+if [ -n "$payload" ] && [ -z "$cmd" ]; then
+  ask "confirm-master-push hook: could not parse the tool input. Confirm this command manually."
+fi
 
 # Does "git ... push" appear without crossing a command separator (survives intervening options)?
 printf '%s' "$cmd" | grep -Eq '(^|[[:space:];&|(])git[[:space:]]+([^;&|]*[[:space:]])?push([[:space:]]|$)' || exit 0

@@ -9,9 +9,21 @@
 # through to ask, which is acceptable.
 
 payload=$(cat)
+
+ask() {
+  printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"%s"}}' "$1"
+  exit 0
+}
+
+# Fail closed: a confirm gate that silently stops firing is worse than a noisy
+# one. If jq is missing, or the payload is non-empty but the command can't be
+# extracted, ask instead of exiting 0.
+command -v jq >/dev/null 2>&1 || ask "confirm-merge hook: jq not found, cannot inspect the command. Install jq; confirm this command manually."
 cmd=$(printf '%s' "$payload" | jq -r '.tool_input.command // empty' 2>/dev/null)
+if [ -n "$payload" ] && [ -z "$cmd" ]; then
+  ask "confirm-merge hook: could not parse the tool input. Confirm this command manually."
+fi
 
 printf '%s' "$cmd" | grep -Eq '(^|[[:space:];&|(])gh[[:space:]]+([^;&|]*[[:space:]])?pr[[:space:]]+([^;&|]*[[:space:]])?merge([[:space:]]|$)' || exit 0
 
-printf '%s' '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"This is about to merge a PR. Merge permission is scoped to that one PR. Confirm whether to proceed."}}'
-exit 0
+ask "This is about to merge a PR. Merge permission is scoped to that one PR. Confirm whether to proceed."
